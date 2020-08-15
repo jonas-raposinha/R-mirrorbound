@@ -18,7 +18,6 @@ boundaries <- function(indata, ypadding, xpadding, choice){
   outdata <- matrix(0, ny+2*ypadding, nx+2*xpadding)
   
   switch(choice, # Type of boundary condition
-         
          mirror={  # Symmetric replication conditions
            sum <- 0
            yiter <- 0
