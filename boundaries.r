@@ -15,10 +15,15 @@ boundaries <- function(indata, ypadding, xpadding, choice){
   if(xpadding >= nx){ # Reduces size of padding if equal to or larger than object
     xpadding <- xpadding-1
   }
-  outdata <- matrix(0, ny+2*ypadding, nx+2*xpadding)
   
   switch(choice, # Type of boundary condition
+         ignore={
+           outdata <- as.numeric(indata)
+           return(outdata)
+         },
+         
          mirror={  # Symmetric replication conditions
+           outdata <- matrix(0, ny+2*ypadding, nx+2*xpadding)
            sum <- 0
            yiter <- 0
            xiter <- 0
@@ -53,6 +58,7 @@ boundaries <- function(indata, ypadding, xpadding, choice){
            }
            return(outdata)
          },
+         
          stop("error: invalid choice of filter")
          )
 }
