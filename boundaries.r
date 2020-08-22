@@ -24,18 +24,26 @@ boundaries <- function(indata, ypadding, xpadding, choice){
          
          zeros={ # Zero padding
            outdata <- cbind( # Pads columns
-             matrix(0,ny,xpadding),
+             matrix(data = 0,
+                    nrow = ny,
+                    ncol = xpadding),
              indata,
-             matrix(0,ny,xpadding)
+             matrix(data = 0,
+                    nrow = ny,
+                    ncol = xpadding)
            )
 
            outdata <- rbind( # Pads rows
-             matrix(0,ypadding, nx+2*xpadding),
+             matrix(data = 0,
+                    nrow = ypadding,
+                    ncol = nx+2*xpadding),
              outdata,
-             matrix(0,ypadding, nx+2*xpadding))
+             matrix(data = 0,
+                    nrow = ypadding, 
+                    ncol = nx+2*xpadding))
            
            return(outdata)
-           },
+         },
          
          cpad={ # Padding with boundary constant value
            outdata <- cbind( # Pads columns
@@ -61,7 +69,7 @@ boundaries <- function(indata, ypadding, xpadding, choice){
            )
            
            return(outdata)
-           },
+         },
            
            circular={ # Repeating entire signal
              outdata <- cbind( # Pads columns
@@ -71,7 +79,7 @@ boundaries <- function(indata, ypadding, xpadding, choice){
              )
 
              outdata <- rbind( # Pads rows
-               outdata[(ny-ypadding+1):nx,],
+               outdata[(ny-ypadding+1):ny,],
                outdata,
                outdata[1:ypadding,]
              )
@@ -79,44 +87,22 @@ boundaries <- function(indata, ypadding, xpadding, choice){
              return(outdata)
            },
          
-           mirror={  # Symmetric replication conditions
-             outdata <- matrix(0, ny+2*ypadding, nx+2*xpadding)
-             sum <- 0
-             yiter <- 0
-             xiter <- 0
-             kloop <- c((-ypadding):(ny+ypadding))[-(ypadding+1)] # Loop vectors excluding "0" position
-             lloop <- c((-xpadding):(nx+xpadding))[-(xpadding+1)]
-           
-             for(k in kloop){ # Loops through y
-               yout <- k # Position in the original matrix
-               if(k < 0){
-                 yout <- -k
-               }
-               if(k > ny){
-                 yout <- 2*ny-k+1 
-               }
-               yiter <- yiter+1
-             
-               for(l in lloop){ # Loops through x
-                 xout <- l # Position in the original matrix
-                 if(l < 0){
-                   xout <- -l
-                 }
-                 if(l > nx){
-                   xout <- 2*nx-l+1
-                 }
-                 xiter <- xiter+1
-                 outdata[yiter, xiter] <- indata[yout, xout] # Prints the padded matrix
-               } 
-               xiter <- 0
-             }
-             if(xpadding == 0){
-               outdata <- as.numeric(outdata)
-             }
+           mirror={  # Symmetric replication
+             outdata <- cbind( # Pads columns
+               indata[,xpadding:1], # Inverts signal at the boundary
+               indata,
+               indata[,nx:(nx-xpadding+1)]
+             )
+   
+             outdata <- rbind( # Pads rows
+               outdata[ypadding:1,],
+               outdata,
+               outdata[ny:(ny-ypadding+1),]
+             )
              
              return(outdata)
-             },
+           },
          
-             stop("error: invalid choice of filter")
+           stop("error: invalid choice of filter")
         )
 }
