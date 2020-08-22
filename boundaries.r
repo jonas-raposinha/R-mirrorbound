@@ -7,13 +7,21 @@ boundaries <- function(indata, ypadding, xpadding, choice){
   indata <- as.matrix(indata)
   ny <- dim(indata)[1]
   nx <- dim(indata)[2]
- 
-  if(xpadding >= nx){ # Reduces size of padding if equal to or larger than object
-    xpadding <- xpadding-1
+  
+  if(ypadding == 0){ # Fixes ypadding in case of mixup using 1d indata
+    ypadding <- xpadding
   }
   
   if(xpadding >= nx){ # Reduces size of padding if equal to or larger than object
     xpadding <- xpadding-1
+  }
+  
+  if(ypadding >= ny){ # Reduces size of padding if equal to or larger than object
+    ypadding <- ypadding-1
+  }
+  
+  if(nx > 1){
+    
   }
   
   switch(choice, # Type of boundary condition
@@ -31,7 +39,8 @@ boundaries <- function(indata, ypadding, xpadding, choice){
              matrix(data = 0,
                     nrow = ypadding, 
                     ncol = nx+2*xpadding))
-           if(nx > 1){
+           
+           if(nx > 1){ # Only pads columns if indata is 2d
              outdata <- cbind( # Pads columns
                matrix(data = 0,
                       nrow = ny,
