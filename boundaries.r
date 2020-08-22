@@ -23,83 +23,90 @@ boundaries <- function(indata, ypadding, xpadding, choice){
          },
          
          zeros={ # Zero padding
-           outdata <- cbind( # Pads columns
-             matrix(data = 0,
-                    nrow = ny,
-                    ncol = xpadding),
-             indata,
-             matrix(data = 0,
-                    nrow = ny,
-                    ncol = xpadding)
-           )
-
-           outdata <- rbind( # Pads rows
+            outdata <- rbind( # Pads rows
              matrix(data = 0,
                     nrow = ypadding,
                     ncol = nx+2*xpadding),
-             outdata,
+             indata,
              matrix(data = 0,
                     nrow = ypadding, 
                     ncol = nx+2*xpadding))
+           if(nx > 1){
+             outdata <- cbind( # Pads columns
+               matrix(data = 0,
+                      nrow = ny,
+                      ncol = xpadding),
+               outdata,
+               matrix(data = 0,
+                      nrow = ny,
+                      ncol = xpadding)
+             )
+           }
            
            return(outdata)
          },
          
          cpad={ # Padding with boundary constant value
-           outdata <- cbind( # Pads columns
-             matrix(data = indata[,1],
-                    nrow = ny,
-                    ncol = xpadding),
-             indata,
-             matrix(data = indata[,nx],
-                    nrow = ny,
-                    ncol = xpadding)
-           )
-           
            outdata <- rbind(# Pads rows
-             matrix(data = outdata[1,],
+             matrix(data = indata[1,],
                     nrow = ypadding,
-                    ncol = nx+2*xpadding,
+                    ncol = nx,
                     byrow = T),
-             outdata,
-             matrix(data = outdata[ny,],
+             indata,
+             matrix(data = indata[ny,],
                     nrow = ypadding,
-                    ncol = nx+2*xpadding,
+                    ncol = nx,
                     byrow = T)
            )
+           
+           if(nx > 1){
+              outdata <- cbind( # Pads columns
+               matrix(data = outdata[,1],
+                      nrow = ny+2*ypadding,
+                      ncol = xpadding),
+               outdata,
+               matrix(data = outdata[,nx],
+                      nrow = ny+2*ypadding,
+                      ncol = xpadding)
+             )
+           }
            
            return(outdata)
          },
            
            circular={ # Repeating entire signal
-             outdata <- cbind( # Pads columns
-               indata[,(nx-xpadding+1):nx],
-               indata,
-               indata[,1:xpadding]
-             )
-
              outdata <- rbind( # Pads rows
-               outdata[(ny-ypadding+1):ny,],
-               outdata,
-               outdata[1:ypadding,]
+               indata[(ny-ypadding+1):ny,],
+               indata,
+               indata[1:ypadding,]
              )
-         
+             
+             if(nx > 1){
+               outdata <- cbind( # Pads columns
+                 outdata[,(nx-xpadding+1):nx],
+                 outdata,
+                 outdata[,1:xpadding]
+               )
+             }
+             
              return(outdata)
            },
          
            mirror={  # Symmetric replication
-             outdata <- cbind( # Pads columns
-               indata[,xpadding:1], # Inverts signal at the boundary
-               indata,
-               indata[,nx:(nx-xpadding+1)]
-             )
-   
              outdata <- rbind( # Pads rows
-               outdata[ypadding:1,],
-               outdata,
-               outdata[ny:(ny-ypadding+1),]
+               indata[ypadding:1,],
+               indata,
+               indata[ny:(ny-ypadding+1),]
              )
              
+             if(nx > 1){
+                outdata <- cbind( # Pads columns
+                 outdata[,xpadding:1], # Inverts signal at the boundary
+                 outdata,
+                 outdata[,nx:(nx-xpadding+1)]
+               )
+             }
+       
              return(outdata)
            },
          
