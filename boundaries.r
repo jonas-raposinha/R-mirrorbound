@@ -62,6 +62,22 @@ boundaries <- function(indata, ypadding, xpadding, choice){
            
            return(outdata)
            },
+           
+           circular={ # Repeating entire signal
+             outdata <- cbind( # Pads columns
+               indata[,(nx-xpadding+1):nx],
+               indata,
+               indata[,1:xpadding]
+             )
+
+             outdata <- rbind( # Pads rows
+               outdata[(ny-ypadding+1):nx,],
+               outdata,
+               outdata[1:ypadding,]
+             )
+         
+             return(outdata)
+           },
          
            mirror={  # Symmetric replication conditions
              outdata <- matrix(0, ny+2*ypadding, nx+2*xpadding)
