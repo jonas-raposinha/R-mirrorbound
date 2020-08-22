@@ -18,9 +18,23 @@ boundaries <- function(indata, ypadding, xpadding, choice){
   
   switch(choice, # Type of boundary condition
          ignore={
-           outdata <- as.numeric(indata)
+           outdata <- as.numeric(indata) # Returns indata unaltered for further processing
            return(outdata)
          },
+         
+         zeros={ # Zero padding
+           outdata <- cbind( # Pads columns
+             matrix(0,ny,xpadding),
+             indata,
+             matrix(0,ny,xpadding)
+           )
+
+           outdata <- rbind( # Pads rows
+             matrix(0,ypadding, nx+2*xpadding),
+             outdata,
+             matrix(0,ypadding, nx+2*xpadding))
+           return(outdata)
+           },
          
          mirror={  # Symmetric replication conditions
            outdata <- matrix(0, ny+2*ypadding, nx+2*xpadding)
