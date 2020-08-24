@@ -19,19 +19,16 @@ boundaries <- function(indata, ypadding, xpadding, choice){
   if(ypadding >= ny){ # Reduces size of padding if equal to or larger than object
     ypadding <- ypadding-1
   }
-  
-  if(nx > 1){
     
-  }
-  
   switch(choice, # Type of boundary condition
          ignore={
            outdata <- as.numeric(indata) # Returns indata unaltered for further processing
+           
            return(outdata)
          },
          
          zeros={ # Zero padding
-            outdata <- rbind( # Pads rows
+           outdata <- rbind( # Pads rows on both sides of indata
              matrix(data = 0,
                     nrow = ypadding,
                     ncol = nx+2*xpadding),
@@ -41,7 +38,7 @@ boundaries <- function(indata, ypadding, xpadding, choice){
                     ncol = nx+2*xpadding))
            
            if(nx > 1){ # Only pads columns if indata is 2d
-             outdata <- cbind( # Pads columns
+             outdata <- cbind( # Pads columns on both sides of the row padded outdata
                matrix(data = 0,
                       nrow = ny,
                       ncol = xpadding),
@@ -69,7 +66,7 @@ boundaries <- function(indata, ypadding, xpadding, choice){
            )
            
            if(nx > 1){
-              outdata <- cbind( # Pads columns
+             outdata <- cbind( # Pads columns
                matrix(data = outdata[,1],
                       nrow = ny+2*ypadding,
                       ncol = xpadding),
@@ -83,42 +80,42 @@ boundaries <- function(indata, ypadding, xpadding, choice){
            return(outdata)
          },
            
-           circular={ # Repeating entire signal
-             outdata <- rbind( # Pads rows
-               indata[(ny-ypadding+1):ny,],
-               indata,
-               indata[1:ypadding,]
+         circular={ # Repeating entire signal
+           outdata <- rbind( # Pads rows
+             indata[(ny-ypadding+1):ny,],
+             indata,
+             indata[1:ypadding,]
+           )
+             
+           if(nx > 1){
+             outdata <- cbind( # Pads columns
+               outdata[,(nx-xpadding+1):nx],
+               outdata,
+               outdata[,1:xpadding]
              )
+           }
              
-             if(nx > 1){
-               outdata <- cbind( # Pads columns
-                 outdata[,(nx-xpadding+1):nx],
-                 outdata,
-                 outdata[,1:xpadding]
-               )
-             }
-             
-             return(outdata)
-           },
+           return(outdata)
+         },
          
-           mirror={  # Symmetric replication
-             outdata <- rbind( # Pads rows
-               indata[ypadding:1,],
-               indata,
-               indata[ny:(ny-ypadding+1),]
-             )
+         mirror={  # Symmetric replication
+           outdata <- rbind( # Pads rows
+             indata[ypadding:1,],
+             indata,
+             indata[ny:(ny-ypadding+1),]
+           )
              
-             if(nx > 1){
-                outdata <- cbind( # Pads columns
-                 outdata[,xpadding:1], # Inverts signal at the boundary
-                 outdata,
-                 outdata[,nx:(nx-xpadding+1)]
-               )
-             }
+           if(nx > 1){
+              outdata <- cbind( # Pads columns
+               outdata[,xpadding:1], # Inverts signal at the boundary
+               outdata,
+               outdata[,nx:(nx-xpadding+1)]
+             )
+           }
        
-             return(outdata)
-           },
+           return(outdata)
+         },
          
-           stop("error: invalid choice of filter")
+         stop("error: invalid choice of boundary condition")
         )
 }
